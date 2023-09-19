@@ -24,7 +24,7 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Main />}/>
           <Route path="login" element={<Login />} />
-          <Route path="/item/:itemId" element={<Detail />} />
+          <Route path="/items/:itemId" element={<Detail />} />
           <Route path="/busket" element={<Busket />} />
         </Route>
       </Routes>

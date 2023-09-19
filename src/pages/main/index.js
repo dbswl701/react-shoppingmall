@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components';
 import axios from 'axios';
 import Item from './Item';
+import { useNavigate } from 'react-router-dom';
 
 const Radio = styled.input`
   display: none;
@@ -58,6 +59,7 @@ export default function Main() {
 
   const [select, setSelect] = useState('all');
   const [itemList, setItemList] = useState([]);
+  const navigate = useNavigate();
 
   const fetchData = async () => {
     if (select !== 'all') {
@@ -78,6 +80,12 @@ export default function Main() {
   }
   console.log(itemList);
   console.log(select);
+
+  // 어디까지 올라가서 선언해야하는지 아직도 감을 못잡겠다.
+  const handleItemClick = (id) => {
+    // /items/:id로 이동
+    navigate(`./items/${id}`);
+  }
   return (
     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
       <h1>Products</h1>
@@ -98,7 +106,7 @@ export default function Main() {
         <p style={{color: '#7F7F7F', fontWeight: '600'}}>Showing: {itemList.length} items</p>
         <div style={{display: 'flex', gap: '10px', width: '1080px', flexWrap: 'wrap'}}>
           {
-            itemList.map((item) => <Item key={item.id} item={item} />)
+            itemList.map((item) => <Item key={item.id} item={item} handleItemClick={handleItemClick}/>)
           }
         </div>
       </div>
