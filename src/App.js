@@ -4,12 +4,12 @@ import Main from './pages/main';
 import Login from './pages/login';
 import Detail from './pages/detail';
 import Busket from './pages/basket';
+import Nav from './Components/Nav';
 
 function Layout () {
   return (
     <div>
-      {/* <Nav /> */}
-      Nav
+      <Nav />
       <Outlet />
       {/* <Footer /> */}
       Footer
