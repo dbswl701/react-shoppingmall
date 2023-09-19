@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components';
 import axios from 'axios';
+import Item from './Item';
 
 const Radio = styled.input`
   display: none;
@@ -67,7 +68,7 @@ export default function Main() {
       setItemList(response.data);
     }
   }
-  
+
   useEffect(() => {
     fetchData();
   }, [select]);
@@ -75,6 +76,7 @@ export default function Main() {
   const handleRadioSelect = async (e) => {
     setSelect(e.target.id);
   }
+  console.log(itemList);
   console.log(select);
   return (
     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
@@ -91,13 +93,15 @@ export default function Main() {
             </div>
           ))
         }
-        
-        {/* <Radio type="radio">전자기기</Radio>
-        <Radio type="radio">쥬얼리</Radio>
-        <Radio type="radio">남성의류</Radio>
-        <Radio type="radio">여성의류</Radio> */}
       </div>
-      <div>asdf</div>
+      <div>
+        <p style={{color: '#7F7F7F', fontWeight: '600'}}>Showing: {itemList.length} items</p>
+        <div style={{display: 'flex', gap: '10px', width: '1080px', flexWrap: 'wrap'}}>
+          {
+            itemList.map((item) => <Item key={item.id} item={item} />)
+          }
+        </div>
+      </div>
     </div>
   )
 }
