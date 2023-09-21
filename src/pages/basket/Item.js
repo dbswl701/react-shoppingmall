@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components';
 import {ReactComponent as Trash} from '../../asests/icons//trash.svg';
+import firebase from '../../firebase';
 
 const Wrapper = styled.div`
   display: flex;
@@ -44,13 +45,29 @@ const CountBox = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: ${prop => prop.isSign ? 'pointer' : 'auto'}
+  cursor: ${prop => prop.$isSign ? 'pointer' : 'auto'}
 `;
 
 export default function Item({item}) {
-  const [count, setCount] = useState(1);
-
+  // 장바구니 페이지의 경우, 데이터를 어떻게 관리해야하는지.
+  // 각 아이템의 count를 증가, 감소 시 state만 관리, 언마운트나 결제시에만 db에 저장하는 방식
+  // 또는 증가, 감소때마다 db도 같이 변경시켜줘야하는지.
+  const uid = JSON.parse(localStorage.getItem('user')).uid;
   console.log(item);
+
+  const handleCount = (sign) => { // 변수명이 애매하다?
+    if (sign === '-') {
+      firebase.database().ref(`users/${uid}/carts/${item.id}`).update({
+        count: item.count-1,
+      });
+
+    }
+    if (sign === '+') {
+      firebase.database().ref(`users/${uid}/carts/${item.id}`).update({
+        count: item.count+1,
+      });
+    }
+  }
   return (
     <Wrapper>
       <Img src={item.image} alt="상품 이미지" />
@@ -60,9 +77,9 @@ export default function Item({item}) {
         <PriceText>{item.price} X {item.count} = $ {item.price * item.count}</PriceText>
       </div>
       <div style={{display: 'flex', gap: '10px', alignItems: 'center'}}>
-        <CountBox isSign={true} onClick={() => setCount((prev) => prev - 1)}>-</CountBox>
-        <CountBox isSign={false}>{count}</CountBox>
-        <CountBox isSign={true} onClick={() => setCount((prev) => prev + 1)}>+</CountBox>
+        <CountBox $isSign={true} onClick={() => handleCount('-')}>-</CountBox>
+        <CountBox $isSign={false}>{item.count}</CountBox>
+        <CountBox $isSign={true} onClick={() => handleCount('+')}>+</CountBox>
       </div>
       <div>
         <Trash style={{ marginBottom: '100px'}} />

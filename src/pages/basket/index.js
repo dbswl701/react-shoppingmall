@@ -31,16 +31,13 @@ export default function Basket() {
   useEffect(() => {
     const getData = async () => {
       try{
-        const dbRef = firebase.database().ref();
-        const snapshot = await dbRef.child("users").child(uid).get();
-        if (snapshot.exists()) { // cart에 저장된게 있을 때
-          console.log(snapshot.val().carts);
-          setCarts(snapshot.val().carts);
-          setTotalCost(Object.values(snapshot.val().carts).reduce((prev, cur) => prev.price + cur.price))
-        }
-        else { // 장바구니 비어있을 때
-          console.log('empty!');
-        }
+        const starCountRef = firebase.database().ref(`users/${uid}/carts`);
+        starCountRef.on('value', (snapshot) => {
+          const data = snapshot.val();
+          console.log(data);
+          setTotalCost(Object.values(data).reduce((prev, cur) => prev.price*prev.count + cur.price*cur.count))
+          setCarts(data);
+        });
       }
       catch(err) {
         console.error(err);
