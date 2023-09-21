@@ -41,12 +41,14 @@ export default function Login() {
       // Signed in
       const user = userCredential.user;
       console.log(user);
-      
+
       // 일단 로컬스토리지에 저장하고, 나중에 리덕스로 교체
       const data = {
         uid: user.uid,
       }
       localStorage.setItem("user", JSON.stringify(data));
+
+      navigate('../');
       // ...
     })
     .catch((error) => {
