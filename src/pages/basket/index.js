@@ -65,7 +65,7 @@ export default function Basket() {
       </div>
       <div style={{display: 'flex', justifyContent: 'end', gap: '20px', marginTop: '50px'}}>
         <TotalCostBtn>
-          <p style={{fontWeight: '600'}}>합계: $ {totalCost}</p>
+          <p style={{fontWeight: '600'}}>합계: $ {totalCost.toFixed(2)}</p>
         </TotalCostBtn>
         {/* div 밑에 이렇게 div로 감싸지 않은 button이나 Img 넣는게 바람직한가? */}
         <button style={{border: '1px solid rgb(160,160,167)', backgroundColor: 'transparent', width: '150px'}}>계산하기</button>

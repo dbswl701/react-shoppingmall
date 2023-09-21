@@ -74,7 +74,7 @@ export default function Item({item}) {
       <div>
         <CategoryText>{item.category}</CategoryText>
         <TitleText>{item.title}</TitleText>
-        <PriceText>{item.price} X {item.count} = $ {item.price * item.count}</PriceText>
+        <PriceText>{item.price} X {item.count} = $ {(item.price * item.count).toFixed(2)}</PriceText>
       </div>
       <div style={{display: 'flex', gap: '10px', alignItems: 'center'}}>
         <CountBox $isSign={true} onClick={() => handleCount('-')}>-</CountBox>
