@@ -57,6 +57,7 @@ export default function Item({item}) {
 
   const handleCount = (sign) => { // 변수명이 애매하다?
     if (sign === '-') {
+      if (item.count === 0) return;
       firebase.database().ref(`users/${uid}/carts/${item.id}`).update({
         count: item.count-1,
       });
