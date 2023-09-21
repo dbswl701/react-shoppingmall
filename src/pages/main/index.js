@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import axios from 'axios';
 import Item from './Item';
 import { useNavigate } from 'react-router-dom';
+import { ReactComponent as Snipper } from "../../asests/icons/snipper.svg";
 
 const Radio = styled.input`
   display: none;
@@ -55,25 +56,35 @@ const radioTItle = [
     value: "women's clothing",
   },
 ]
-export default function Main() {
+function Main() {
 
   const [select, setSelect] = useState('all');
   const [itemList, setItemList] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const fetchData = async () => {
-    if (select !== 'all') {
-      const response = await axios.get(`https://fakestoreapi.com/products/category/${select}`);
-      setItemList(response.data);
-    } else {
-      const response = await axios.get(`https://fakestoreapi.com/products/`);
-      setItemList(response.data);
+    try{
+      if (select !== 'all') {
+        const response = await axios.get(`https://fakestoreapi.com/products/category/${select}`);
+        setItemList(response.data);
+      } else {
+        const response = await axios.get(`https://fakestoreapi.com/products/`);
+        setItemList(response.data);
+      }
+      setIsLoading(false);
+    } catch{
+      console.log('err');
+      setIsLoading(false);
     }
   }
 
-  useEffect(() => {
+  useEffect( () => {
+    setIsLoading(true);
     fetchData();
   }, [select]);
+
+  console.log(isLoading);
 
   const handleRadioSelect = async (e) => {
     setSelect(e.target.id);
@@ -87,29 +98,37 @@ export default function Main() {
     navigate(`./items/${id}`);
   }
   return (
-    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-      <h1>Products</h1>
-      <div style={{display: 'flex', gap: '20px'}}>
-        {
-          radioTItle.map((item) => (
-            // fragmentation에는 key만 넣는게 안되는듯
-            <div key = {item.id}>
-              <Radio type="radio" id={item.value} name="select" onChange={handleRadioSelect} checked={select === item.value}/>
-              <RadioLabel htmlFor={item.value}>
-                <RadioText>{item.title}</RadioText>
-              </RadioLabel>
+    <>
+    {
+      isLoading ? <Snipper style={{display: 'flex', margin: '100px auto'}} /> : (
+        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+              <h1>Products</h1>
+              <div style={{display: 'flex', gap: '20px'}}>
+                {
+                  radioTItle.map((item) => (
+                    // fragmentation에는 key만 넣는게 안되는듯
+                    <div key = {item.id}>
+                      <Radio type="radio" id={item.value} name="select" onChange={handleRadioSelect} checked={select === item.value}/>
+                      <RadioLabel htmlFor={item.value}>
+                        <RadioText>{item.title}</RadioText>
+                      </RadioLabel>
+                    </div>
+                  ))
+                }
+              </div>
+              <div>
+                <p style={{color: '#7F7F7F', fontWeight: '600'}}>Showing: {itemList.length} items</p>
+                <div style={{display: 'flex', gap: '10px', width: '1080px', flexWrap: 'wrap'}}>
+                  {
+                    itemList.map((item) => <Item key={item.id} item={item} handleItemClick={handleItemClick}/>)
+                  }
+                </div>
+              </div>
             </div>
-          ))
-        }
-      </div>
-      <div>
-        <p style={{color: '#7F7F7F', fontWeight: '600'}}>Showing: {itemList.length} items</p>
-        <div style={{display: 'flex', gap: '10px', width: '1080px', flexWrap: 'wrap'}}>
-          {
-            itemList.map((item) => <Item key={item.id} item={item} handleItemClick={handleItemClick}/>)
-          }
-        </div>
-      </div>
-    </div>
+      )
+    }
+    </>
   )
 }
+
+export default React.memo(Main);
