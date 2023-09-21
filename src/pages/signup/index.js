@@ -44,7 +44,7 @@ export default function Signup() {
     pwIsValid: true,
     pwCheck: true,
   })
-  
+
   const handleChange = (e) => {
     const {name, value} = e.target;
     console.log(name, value);
@@ -57,6 +57,8 @@ export default function Signup() {
       // Signed in 
       var user = userCredential.user;
       console.log(user);
+      alert('회원가입에 성공하였습니다.');
+      navigate('../login');
       // ...
     })
     .catch((error) => {
@@ -106,18 +108,12 @@ export default function Signup() {
       <div style={{display: 'flex', flexDirection: 'column', width: '450px', justifyContent: 'center', alignItems: 'center', boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px', padding: '20px 10px'}}>
         <h1>회원가입</h1>
         <Input name="id" value={info.id} onChange={handleChange} placeholder='Email' />
-          {
-            !state.idIsValid && <InfoText>유효한 이메일 형식이 아닙니다.</InfoText>
-          }
-          <Input name="pw" value={info.pw} onChange={handleChange} type="password" placeholder='Password'/>
-          {
-            !state.pwIsValid && <InfoText>영문자, 숫자, 특수문자를 사용해 8~25자의 비밀번호를 입력해주세요.</InfoText>
-          }
-          <Input name="pwCheck" value={info.pwCheck} onChange={handleChange} type="password" placeholder='Password Check'/>
-          {
-            !state.pwCheck && <InfoText>비밀번호를 확인해주세요.</InfoText>
-          }
-          <Button onClick={handleSubmit}>회원가입</Button>
+        { !state.idIsValid && <InfoText>유효한 이메일 형식이 아닙니다.</InfoText> }
+        <Input name="pw" value={info.pw} onChange={handleChange} type="password" placeholder='Password'/>
+        { !state.pwIsValid && <InfoText>영문자, 숫자, 특수문자를 사용해 8~25자의 비밀번호를 입력해주세요.</InfoText> }
+        <Input name="pwCheck" value={info.pwCheck} onChange={handleChange} type="password" placeholder='Password Check'/>
+        { !state.pwCheck && <InfoText>비밀번호를 확인해주세요.</InfoText> }
+        <Button onClick={handleSubmit}>회원가입</Button>
         <p><b>계정이 있습니까?</b><span onClick={() => navigate('../signup')}>  로그인하기</span></p>
       </div>
     </div>
