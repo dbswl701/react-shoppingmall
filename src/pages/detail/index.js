@@ -29,8 +29,10 @@ const DescText = styled.p`
 
 const ButtonInCart = styled.button`
   // background-color: rgb(114, 116, 129);
-  background-color: transparent;
-  color: rgb(114, 116, 129);
+
+  // styled-component에 Prop 전달
+  background-color: ${({ isInCart }) => isInCart ? 'rgb(114, 116, 129)': 'transparent'};
+  color: ${({ isInCart }) => isInCart ? 'white' : 'rgb(114, 116, 129)'};
   width: 200px;
   height: 50px;
   border: 1px solid rgb(114, 116, 129);
@@ -60,6 +62,25 @@ export default React.memo(function Detail() {
   console.log(params.itemId);
   const [item, setItem] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [isInCart, setIsInCart] = useState(false);
+  const getData = JSON.parse(localStorage.getItem('user'));
+
+  // 장바구니에 담긴 제품인지 확인 -> 처음 들어올 때 디비에 있는지 확인, 추가 시 업데이트
+  const checkInCart = () => {
+    const dbRef = firebase.database().ref();
+    dbRef.child("users").child(getData.uid).get().then((snapshot) => {
+      if (snapshot.exists()) {
+        console.log('is in cart?', snapshot.val());
+        // carts에 item.id를 key로 가지는게 있는지 확인
+        console.log(Object.keys(snapshot.val().carts).includes(`${params.itemId}`))
+        if (Object.keys(snapshot.val().carts).includes(`${params.itemId}`)) setIsInCart(true);
+      } else {
+        console.log("No data available");
+      }
+    }).catch((error) => {
+      console.error(error);
+    });
+  }
 
   const UpdateCartData = (uid) => {
     firebase.database().ref('users').child(uid).child('carts').child(item.id).set({
@@ -73,7 +94,6 @@ export default React.memo(function Detail() {
 
   const handleInCart = () => {
     // id, 카테고리, 이름, 가격, 개수
-    const getData = JSON.parse(localStorage.getItem('user'));
 
     const data = [
       ...getData.carts,
@@ -92,6 +112,7 @@ export default React.memo(function Detail() {
     localStorage.setItem("user", JSON.stringify(setData));
     console.log(setData);
     UpdateCartData(getData.uid);
+    setIsInCart(true);
     // 이런 형태로 저장 예정
     // {
     //   uid: '123123';
@@ -110,16 +131,6 @@ export default React.memo(function Detail() {
     //     ]
     //   ]
     // }
-    const dbRef = firebase.database().ref();
-    dbRef.child("users").child(getData.uid).get().then((snapshot) => {
-      if (snapshot.exists()) {
-        console.log(snapshot.val());
-      } else {
-        console.log("No data available");
-      }
-    }).catch((error) => {
-      console.error(error);
-    });
   }
 
   useEffect(() => {
@@ -135,6 +146,7 @@ export default React.memo(function Detail() {
       }
     }
     setIsLoading(true);
+    checkInCart();
     fetchData();
     // setIsLoading(false); // fetchData() 함수는 비동기이기에 호출하고 바로 그 다음줄을 실행해서 함수 실행이 끝나지 않았는데도 이게 실행되기에 원하는대로 동작하지 않음.
   }, [params])
@@ -153,7 +165,7 @@ export default React.memo(function Detail() {
               <PriceText>$ {item.price}</PriceText>
               <DescText>{item.description}</DescText>
               <div style={{display: 'flex', gap: '50px', marginTop: '100px'}}>
-                <ButtonInCart onClick={handleInCart}>장바구니에 담기</ButtonInCart>
+                <ButtonInCart isInCart={isInCart} onClick={handleInCart}>{isInCart ? '장바구니에 담긴 제품' : '장바구니에 담기'}</ButtonInCart>
                 <ButtonGoCart>장바구니로 이동</ButtonGoCart>
               </div>
             </div>
