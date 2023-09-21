@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -20,16 +20,27 @@ const Button = styled.button`
   cursor: pointer;
   margin-top: 10px;
 `;
-export default function Login() {
+export default function Signup() {
   const navigate = useNavigate();
+  const [info, setInfo] = useState({
+    id: '',
+    pw: '',
+    pwCheck: '',
+  })
+  const handleChange = (e) => {
+    const {name, value} = e.target;
+    console.log(name, value);
+    setInfo({...info, [name]: value});
+  }
 
   return (
     <div style={{display: 'flex', justifyContent: 'center', marginTop: '150px'}}>
       <div style={{display: 'flex', flexDirection: 'column', width: '450px', justifyContent: 'center', alignItems: 'center', boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px', padding: '20px 10px'}}>
-        <h1>로그인</h1>
+        <h1>회원가입</h1>
         <form style={{display: 'flex', flexDirection: 'column'}}>
-          <Input placeholder='Email' />
-          <Input type="password" placeholder='Password'/>
+          <Input name="id" value={info.id} onChange={handleChange} placeholder='Email' />
+          <Input name="pw" value={info.pw} onChange={handleChange} type="password" placeholder='Password'/>
+          <Input name="pwCheck" value={info.pwCheck} onChange={handleChange} type="password" placeholder='Password Check'/>
           <Button>로그인</Button>
         </form>
         <p><b>계정이 없습니까?</b><span onClick={() => navigate('../signup')}>  가입하기</span></p>
