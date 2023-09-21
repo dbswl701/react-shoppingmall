@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import "firebase/auth";
+import firebase from '../../firebase'; // Firebase 모듈 가져오기
 
 const Input = styled.input`
   width: 300px;
@@ -28,6 +30,7 @@ const InfoText = styled.p`
   color: #d52e2e;
   margin-top: 2px;
 `;
+
 export default function Signup() {
   const navigate = useNavigate();
   const [info, setInfo] = useState({
@@ -35,11 +38,13 @@ export default function Signup() {
     pw: '',
     pwCheck: '',
   })
+
   const [state, setState] = useState({
     idIsValid: true,
     pwIsValid: true,
     pwCheck: true,
   })
+  
   const handleChange = (e) => {
     const {name, value} = e.target;
     console.log(name, value);
@@ -47,8 +52,22 @@ export default function Signup() {
   }
 
   const fetchData = async () => {
-
+    firebase.auth().createUserWithEmailAndPassword(info.id, info.pw)
+    .then((userCredential) => {
+      // Signed in 
+      var user = userCredential.user;
+      console.log(user);
+      // ...
+    })
+    .catch((error) => {
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      console.log(errorCode);
+      console.log(errorMessage);
+      // ..
+    });
   }
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
