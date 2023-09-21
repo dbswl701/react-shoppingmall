@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios';
 import styled from 'styled-components';
 import { ReactComponent as Snipper } from "../../asests/icons/snipper.svg";
@@ -28,11 +28,9 @@ const DescText = styled.p`
 `;
 
 const ButtonInCart = styled.button`
-  // background-color: rgb(114, 116, 129);
-
   // styled-component에 Prop 전달
-  background-color: ${({ isInCart }) => isInCart ? 'rgb(114, 116, 129)': 'transparent'};
-  color: ${({ isInCart }) => isInCart ? 'white' : 'rgb(114, 116, 129)'};
+  background-color: ${(props) => props.$isInCart ? 'rgb(114, 116, 129)': 'transparent'};
+  color: ${(props) => props.$isInCart ? 'white' : 'rgb(114, 116, 129)'};
   width: 200px;
   height: 50px;
   border: 1px solid rgb(114, 116, 129);
@@ -59,6 +57,7 @@ const ButtonGoCart = styled.button`
 `;
 export default React.memo(function Detail() {
   const params = useParams();
+  const navigate = useNavigate();
   console.log(params.itemId);
   const [item, setItem] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -88,6 +87,7 @@ export default React.memo(function Detail() {
       category: item.category,
       title: item.title,
       price: item.price,
+      image: item.image,
       count: 1,
     });
   }
@@ -102,6 +102,7 @@ export default React.memo(function Detail() {
         category: item.category,
         title: item.title,
         price: item.price,
+        image: item.image,
         count: 1,
       }
     ]
@@ -136,9 +137,9 @@ export default React.memo(function Detail() {
   useEffect(() => {
     async function fetchData() { //근데 왜 항상 이렇게 함수를 선언하고 사용하지?
       try {
-        const item = await axios.get(`https://fakestoreapi.com/products/${params.itemId}`);
-        setItem(item.data);
-        console.log(item.data);
+        const itemData = await axios.get(`https://fakestoreapi.com/products/${params.itemId}`);
+        setItem(itemData.data);
+        console.log(itemData.data);
         setIsLoading(false); 
       } catch {
         console.log('err');
@@ -165,8 +166,9 @@ export default React.memo(function Detail() {
               <PriceText>$ {item.price}</PriceText>
               <DescText>{item.description}</DescText>
               <div style={{display: 'flex', gap: '50px', marginTop: '100px'}}>
-                <ButtonInCart isInCart={isInCart} onClick={handleInCart}>{isInCart ? '장바구니에 담긴 제품' : '장바구니에 담기'}</ButtonInCart>
-                <ButtonGoCart>장바구니로 이동</ButtonGoCart>
+                {/* props에 대문자 지정 시 에러 발생. 소문자로 적거나 props dkvdp $ 붙이면 해결 */}
+                <ButtonInCart $isInCart={isInCart} onClick={handleInCart}>{isInCart ? '장바구니에 담긴 제품' : '장바구니에 담기'}</ButtonInCart>
+                <ButtonGoCart onClick={()=>navigate('../basket')}>장바구니로 이동</ButtonGoCart>
               </div>
             </div>
           </div>
