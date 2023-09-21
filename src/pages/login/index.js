@@ -45,6 +45,7 @@ export default function Login() {
       // 일단 로컬스토리지에 저장하고, 나중에 리덕스로 교체
       const data = {
         uid: user.uid,
+        carts: [],
       }
       localStorage.setItem("user", JSON.stringify(data));
 

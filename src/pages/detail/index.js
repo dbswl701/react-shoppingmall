@@ -4,6 +4,8 @@ import axios from 'axios';
 import styled from 'styled-components';
 import { ReactComponent as Snipper } from "../../asests/icons/snipper.svg";
 
+import firebase from '../../firebase'; // Firebase 모듈 가져오기
+
 
 // 이런 네이밍이 적절한가?
 const CategoryText = styled.p`
@@ -25,7 +27,7 @@ const DescText = styled.p`
   color: rgb(148,148,148);
 `;
 
-const Button = styled.button`
+const ButtonInCart = styled.button`
   // background-color: rgb(114, 116, 129);
   background-color: transparent;
   color: rgb(114, 116, 129);
@@ -59,6 +61,67 @@ export default React.memo(function Detail() {
   const [item, setItem] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
+  const UpdateCartData = (uid) => {
+    firebase.database().ref('users').child(uid).child('carts').child(item.id).set({
+      id: item.id,
+      category: item.category,
+      title: item.title,
+      price: item.price,
+      count: 1,
+    });
+  }
+
+  const handleInCart = () => {
+    // id, 카테고리, 이름, 가격, 개수
+    const getData = JSON.parse(localStorage.getItem('user'));
+
+    const data = [
+      ...getData.carts,
+      {
+        id: item.id,
+        category: item.category,
+        title: item.title,
+        price: item.price,
+        count: 1,
+      }
+    ]
+    const setData = {
+      uid: getData.uid,
+      carts: data,
+    }
+    localStorage.setItem("user", JSON.stringify(setData));
+    console.log(setData);
+    UpdateCartData(getData.uid);
+    // 이런 형태로 저장 예정
+    // {
+    //   uid: '123123';
+    //   carts: [
+    //     [
+    //       category,
+    //       title,
+    //       price,
+    //       count
+    //     ],
+    //     [
+    //       category,
+    //       title,
+    //       price,
+    //       count
+    //     ]
+    //   ]
+    // }
+    const dbRef = firebase.database().ref();
+    dbRef.child("users").child(getData.uid).get().then((snapshot) => {
+      if (snapshot.exists()) {
+        console.log(snapshot.val());
+      } else {
+        console.log("No data available");
+      }
+    }).catch((error) => {
+      console.error(error);
+    });
+  }
+
   useEffect(() => {
     async function fetchData() { //근데 왜 항상 이렇게 함수를 선언하고 사용하지?
       try {
@@ -90,7 +153,7 @@ export default React.memo(function Detail() {
               <PriceText>$ {item.price}</PriceText>
               <DescText>{item.description}</DescText>
               <div style={{display: 'flex', gap: '50px', marginTop: '100px'}}>
-                <Button>장바구니에 담기</Button>
+                <ButtonInCart onClick={handleInCart}>장바구니에 담기</ButtonInCart>
                 <ButtonGoCart>장바구니로 이동</ButtonGoCart>
               </div>
             </div>
