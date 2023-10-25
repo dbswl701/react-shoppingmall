@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import firebase from '../../firebase';
 import { useDispatch } from 'react-redux';
-import { login } from '../../reducers/user';
+import { cartIn, login } from '../../reducers/user';
 
 const Input = styled.input`
   width: 300px;
@@ -43,15 +43,18 @@ export default function Login() {
     .then((userCredential) => {
       // Signed in
       const user = userCredential.user;
-      console.log(user);
 
-      // 일단 로컬스토리지에 저장하고, 나중에 리덕스로 교체
-      const data = {
-        uid: user.uid,
-        carts: [],
-      }
-      // localStorage.setItem("user", JSON.stringify(data));
+      // 로그인하면 장바구니 목록도 같이 불러온다.
       dispatch(login(user.uid));
+      const dbRef = firebase.database().ref();
+      dbRef.child("users").child(user.uid).child('carts').get().then((snapshot) => {
+        if (snapshot.exists()) {
+          dispatch(cartIn(snapshot.val()));
+        }
+      }).catch((error) => {
+        console.error(error);
+      });
+
       navigate('../');
       // ...
     })
