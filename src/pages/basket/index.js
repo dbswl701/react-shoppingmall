@@ -42,8 +42,6 @@ export default function Basket() {
   const uid = useSelector((state) => state.user.uid);
 
   const [isLoading, setIsLoading] = useState(false);
-  // const [carts, setCarts] = useState(null);
-  // const uid = JSON.parse(localStorage.getItem('user')).uid;
   const [totalCost, setTotalCost] = useState(0); // 이거 그냥 변수로 선언 안하고 state로 선언하는게 맞나...?
   console.log(uid);
   // 디비에서 들고와서 cart.map 돌리기

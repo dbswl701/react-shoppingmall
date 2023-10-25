@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components';
 import {ReactComponent as Trash} from '../../asests/icons//trash.svg';
 import firebase from '../../firebase';
+import { useSelector } from 'react-redux';
 
 const Wrapper = styled.div`
   display: flex;
@@ -52,8 +53,7 @@ export default function Item({item}) {
   // 장바구니 페이지의 경우, 데이터를 어떻게 관리해야하는지.
   // 각 아이템의 count를 증가, 감소 시 state만 관리, 언마운트나 결제시에만 db에 저장하는 방식
   // 또는 증가, 감소때마다 db도 같이 변경시켜줘야하는지.
-  const uid = JSON.parse(localStorage.getItem('user')).uid;
-  console.log(item);
+  const uid = useSelector((state) => state.user.uid);
 
   const handleCount = (sign) => { // 변수명이 애매하다?
     if (sign === '-') {

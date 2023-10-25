@@ -67,8 +67,6 @@ export default React.memo(function Detail() {
   const [item, setItem] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [isInCart, setIsInCart] = useState(false);
-  // const getData = JSON.parse(localStorage.getItem('user'));
-  // dispatch(cartIn)
   console.log(getData);
 
   // 장바구니에 담긴 제품인지 확인 -> 처음 들어올 때 디비에 있는지 확인, 추가 시 업데이트
@@ -117,7 +115,6 @@ export default React.memo(function Detail() {
       uid: getData.uid,
       carts: data,
     }
-    // localStorage.setItem("user", JSON.stringify(setData));
     dispatch(cartIn(data));
     console.log(setData);
     UpdateCartData(getData.uid);

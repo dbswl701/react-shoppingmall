@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components';
 import firebase from '../../firebase'; // Firebase 모듈 가져오기
+import { useSelector } from 'react-redux';
 
 const Button = styled.button`
   background-color: transparent;
@@ -17,14 +18,13 @@ const PriceValue = styled.p`
 `;
 
 export default function Item({item, handleItemClick}) {
-  const getData = JSON.parse(localStorage.getItem('user'));
-
+  const uid = useSelector((state) => state.user.uid);
   const truncate = (text) => {
     return text.length > 15 ? text.substr(0, 15) + '...' : text;
   }
 
   // 장바구니에 추가 시 호출되는 이벤트 핸들러
-  const UpdateCartData = (e, uid) => {
+  const UpdateCartData = (e) => {
     e.stopPropagation()
     firebase.database().ref('users').child(uid).child('carts').child(item.id).set({
       id: item.id,
@@ -40,10 +40,10 @@ export default function Item({item, handleItemClick}) {
   return (
     <div style={{width: '180px', border: '1px solid #c7c7c7', padding: '40px'}} onClick={() => handleItemClick(item.id)}>
       {/* 사진 이쁘게 조정하고 싶다... */}
-      <img src={item.image} style={{ height: '200px', width: '100%' }} />
+      <img src={item.image} style={{ height: '200px', width: '100%' }} alt="상품 이미지" />
       <p style={{textAlign: 'center', fontWeight: '600'}}>{truncate(item.title)}</p>
       <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '40px'}}>
-        <Button onClick={(e) => UpdateCartData(e, getData.uid)}>장바구니에 담기</Button>
+        <Button onClick={UpdateCartData}>장바구니에 담기</Button>
         <PriceValue>$ {item.price}</PriceValue>
       </div>
     </div>
