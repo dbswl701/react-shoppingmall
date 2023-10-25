@@ -2,6 +2,8 @@ import React, {useState} from 'react'
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import firebase from '../../firebase';
+import { useDispatch } from 'react-redux';
+import { login } from '../../reducers/user';
 
 const Input = styled.input`
   width: 300px;
@@ -23,6 +25,7 @@ const Button = styled.button`
   width: 316px;
 `;
 export default function Login() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [info, setInfo] = useState({
     email: '',
@@ -47,8 +50,8 @@ export default function Login() {
         uid: user.uid,
         carts: [],
       }
-      localStorage.setItem("user", JSON.stringify(data));
-
+      // localStorage.setItem("user", JSON.stringify(data));
+      dispatch(login(user.uid));
       navigate('../');
       // ...
     })

@@ -90,7 +90,7 @@ function Main() {
     fetchData();
   }, [select]);
 
-  console.log(isLoading);
+  // console.log(isLoading);
 
   const handleRadioSelect = async (e) => {
     setSelect(e.target.id);

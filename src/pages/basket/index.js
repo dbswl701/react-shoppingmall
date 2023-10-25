@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useDebugValue, useEffect, useState } from 'react'
 import firebase from '../../firebase'; // Firebase 모듈 가져오기
 import { ReactComponent as Cart } from '../../asests/icons/cartBig.svg';
 import styled from 'styled-components';
 import Item from './Item';
 import {ReactComponent as Snipper} from '../../asests/icons/snipper.svg';
+import { useDispatch, useSelector } from 'react-redux';
+import { cartIn } from '../../reducers/user';
 
 const Title = styled.h1`
   font-size: 3rem;
@@ -35,30 +37,37 @@ const CalBtn = styled.button`
 
 `;
 export default function Basket() {
+  const dispatch = useDispatch();
+  const carts = useSelector((state) => state.user.carts);
+  const uid = useSelector((state) => state.user.uid);
+
   const [isLoading, setIsLoading] = useState(false);
-  const [carts, setCarts] = useState(null);
-  const uid = JSON.parse(localStorage.getItem('user')).uid;
+  // const [carts, setCarts] = useState(null);
+  // const uid = JSON.parse(localStorage.getItem('user')).uid;
   const [totalCost, setTotalCost] = useState(0); // 이거 그냥 변수로 선언 안하고 state로 선언하는게 맞나...?
   console.log(uid);
   // 디비에서 들고와서 cart.map 돌리기
   useEffect(() => {
-    const getData = async () => {
+    const getData = () => {
       try{
         const CartsRef = firebase.database().ref(`users/${uid}/carts`);
         console.log(CartsRef);
-        await CartsRef.on('value', (snapshot) => {
+        CartsRef.on('value', (snapshot) => { // 아 변경할 때 마다 바로바로 반영하려고 이런건가?
           const data = snapshot.val();
           if (data === null) {
             console.log('삭제??')
-            setCarts(null);
+            // setCarts(null);
+            dispatch(cartIn([]));
+            setTotalCost(0);
             return;
           }
           console.log(data);
           console.log(Object.keys(data));
           console.log(Object.values(data));
           console.log(Object.values(data).reduce((prev, cur) => prev + cur.price * cur.count, 0));
-          setTotalCost(Object.values(data).reduce((prev, cur) => prev + cur.price * cur.count, 0))
-          setCarts(data);
+          setTotalCost(Object.values(data).reduce((prev, cur) => prev + cur.price * cur.count, 0));
+          dispatch(cartIn(data));
+          // setCarts(data);
         });
       }
       catch(err) {

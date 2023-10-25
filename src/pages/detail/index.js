@@ -5,6 +5,8 @@ import styled from 'styled-components';
 import { ReactComponent as Snipper } from "../../asests/icons/snipper.svg";
 
 import firebase from '../../firebase'; // Firebase 모듈 가져오기
+import { useDispatch, useSelector } from 'react-redux';
+import { cartIn } from '../../reducers/user';
 
 
 // 이런 네이밍이 적절한가?
@@ -56,13 +58,18 @@ const ButtonGoCart = styled.button`
   }
 `;
 export default React.memo(function Detail() {
+  const dispatch = useDispatch();
+  const getData = useSelector((state) => state.user);
+
   const params = useParams();
   const navigate = useNavigate();
   console.log(params.itemId);
   const [item, setItem] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [isInCart, setIsInCart] = useState(false);
-  const getData = JSON.parse(localStorage.getItem('user'));
+  // const getData = JSON.parse(localStorage.getItem('user'));
+  // dispatch(cartIn)
+  console.log(getData);
 
   // 장바구니에 담긴 제품인지 확인 -> 처음 들어올 때 디비에 있는지 확인, 추가 시 업데이트
   const checkInCart = () => {
@@ -110,7 +117,8 @@ export default React.memo(function Detail() {
       uid: getData.uid,
       carts: data,
     }
-    localStorage.setItem("user", JSON.stringify(setData));
+    // localStorage.setItem("user", JSON.stringify(setData));
+    dispatch(cartIn(data));
     console.log(setData);
     UpdateCartData(getData.uid);
     setIsInCart(true);
