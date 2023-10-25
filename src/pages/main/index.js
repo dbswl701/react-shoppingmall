@@ -4,6 +4,8 @@ import axios from 'axios';
 import Item from './Item';
 import { useNavigate } from 'react-router-dom';
 import { ReactComponent as Snipper } from "../../asests/icons/snipper.svg";
+import { load, category } from '../../reducers/items';
+import { useDispatch, useSelector } from 'react-redux';
 
 const Radio = styled.input`
   display: none;
@@ -58,8 +60,10 @@ const radioTItle = [
 ]
 function Main() {
 
+  const itemList = useSelector((state) => state.items);
+  const dispatch = useDispatch();
   const [select, setSelect] = useState('all');
-  const [itemList, setItemList] = useState([]);
+  // const [itemList, setItemList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -67,10 +71,12 @@ function Main() {
     try{
       if (select !== 'all') {
         const response = await axios.get(`https://fakestoreapi.com/products/category/${select}`);
-        setItemList(response.data);
+        // setItemList(response.data);
+        dispatch(category(response.data));
       } else {
         const response = await axios.get(`https://fakestoreapi.com/products/`);
-        setItemList(response.data);
+        // setItemList(response.data);
+        dispatch(load(response.data));
       }
       setIsLoading(false);
     } catch{
@@ -91,7 +97,9 @@ function Main() {
   }
   console.log(itemList);
   console.log(select);
-
+  // console.log(items); /// 
+  // console.log(items.filteredList);
+  // console.log(items.filteredList.length);
   // 어디까지 올라가서 선언해야하는지 아직도 감을 못잡겠다.
   const handleItemClick = (id) => {
     // /items/:id로 이동
@@ -117,10 +125,10 @@ function Main() {
                 }
               </div>
               <div>
-                <p style={{color: '#7F7F7F', fontWeight: '600'}}>Showing: {itemList.length} items</p>
+                <p style={{color: '#7F7F7F', fontWeight: '600'}}>Showing: {itemList.filteredList.length} items</p>
                 <div style={{display: 'flex', gap: '10px', width: '1080px', flexWrap: 'wrap'}}>
                   {
-                    itemList.map((item) => <Item key={item.id} item={item} handleItemClick={handleItemClick}/>)
+                    itemList.filteredList.map((item) => <Item key={item.id} item={item} handleItemClick={handleItemClick}/>)
                   }
                 </div>
               </div>
