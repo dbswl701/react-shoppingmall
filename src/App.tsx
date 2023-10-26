@@ -6,10 +6,11 @@ import Login from './pages/login';
 import Detail from './pages/detail';
 import Basket from './pages/basket';
 import Nav from './Components/Nav';
-import { ReactComponent as Snipper } from "./asests/icons/snipper.svg";
+// import { ReactComponent as Snipper } from "./asests/icons/snipper.svg";
 import Signup from './pages/signup';
 
-function Layout ({isLoading}) {
+
+function Layout () {
   return (
     <div>
       <Nav />

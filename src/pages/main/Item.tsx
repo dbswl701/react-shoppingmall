@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components';
 import firebase from '../../firebase'; // Firebase 모듈 가져오기
 import { useSelector } from 'react-redux';
+import { RootState } from 'reducers';
 
 const Button = styled.button`
   background-color: transparent;
@@ -17,16 +18,31 @@ const PriceValue = styled.p`
   font-size: 13px;
 `;
 
-export default function Item({item, handleItemClick}) {
-  const uid = useSelector((state) => state.user.uid);
-  const truncate = (text) => {
+type ItemType = {
+  category: string;
+  description: string;
+  id: number;
+  image: string;
+  price: number;
+  rating: {rate: number, count: number};
+  title: string;
+}
+
+type ItemProp = {
+  item: ItemType,
+  handleItemClick: Function, 
+}
+
+export default function Item({item, handleItemClick}: ItemProp) {
+  const uid = useSelector((state: RootState) => state.user.uid);
+  const truncate = (text: string) => {
     return text.length > 15 ? text.substr(0, 15) + '...' : text;
   }
 
   // 장바구니에 추가 시 호출되는 이벤트 핸들러
-  const UpdateCartData = (e) => {
+  const UpdateCartData: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.stopPropagation()
-    firebase.database().ref('users').child(uid).child('carts').child(item.id).set({
+    firebase.database().ref('users').child(uid).child('carts').child((item.id).toString()).set({
       id: item.id,
       category: item.category,
       title: item.title,

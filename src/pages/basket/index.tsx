@@ -1,11 +1,12 @@
-import React, { useDebugValue, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import firebase from '../../firebase'; // Firebase 모듈 가져오기
-import { ReactComponent as Cart } from '../../asests/icons/cartBig.svg';
+import Cart from '../../asests/icons/cartBig.svg';
 import styled from 'styled-components';
 import Item from './Item';
-import {ReactComponent as Snipper} from '../../asests/icons/snipper.svg';
+import Snipper from '../../asests/icons/snipper.svg';
 import { useDispatch, useSelector } from 'react-redux';
-import { cartIn } from '../../reducers/user';
+import { CartItem, cartIn } from '../../reducers/user';
+import { RootState } from 'reducers';
 
 const Title = styled.h1`
   font-size: 3rem;
@@ -38,8 +39,8 @@ const CalBtn = styled.button`
 `;
 export default function Basket() {
   const dispatch = useDispatch();
-  const carts = useSelector((state) => state.user.carts);
-  const uid = useSelector((state) => state.user.uid);
+  const carts = useSelector((state: RootState) => state.user.carts);
+  const uid = useSelector((state: RootState) => state.user.uid);
 
   const [isLoading, setIsLoading] = useState(false);
   const [totalCost, setTotalCost] = useState(0); // 이거 그냥 변수로 선언 안하고 state로 선언하는게 맞나...?
@@ -51,7 +52,7 @@ export default function Basket() {
         const CartsRef = firebase.database().ref(`users/${uid}/carts`);
         console.log(CartsRef);
         CartsRef.on('value', (snapshot) => { // 아 변경할 때 마다 바로바로 반영하려고 이런건가?
-          const data = snapshot.val();
+          const data:CartItem[] = snapshot.val();
           if (data === null) {
             console.log('삭제??')
             // setCarts(null);
@@ -62,7 +63,7 @@ export default function Basket() {
           console.log(data);
           console.log(Object.keys(data));
           console.log(Object.values(data));
-          console.log(Object.values(data).reduce((prev, cur) => prev + cur.price * cur.count, 0));
+          console.log(Object.values(data).reduce((prev:number, cur: CartItem) => prev + cur.price * cur.count, 0));
           setTotalCost(Object.values(data).reduce((prev, cur) => prev + cur.price * cur.count, 0));
           dispatch(cartIn(data));
           // setCarts(data);
@@ -95,8 +96,6 @@ export default function Basket() {
   const noItem = () => {
     return (
       <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '30px'}}>
-        {console.log(22222)}
-
         {/* <h1>장바구니</h1> */}
         <Cart width="400" />
         <Title>Cart가 비어있습니다.</Title>
@@ -108,8 +107,6 @@ export default function Basket() {
   const printItems = () => { // 함수가 아닌 변수로 선언하면 일단 평가되기에 한번 실행된다 -> 에러 발생
     return (
       <div>
-        {console.log(11111)}
-        {console.log(carts)}
         <h1>장바구니</h1>
         <div style={{display: 'flex', flexDirection: 'column', gap:'20px'}}>
           {

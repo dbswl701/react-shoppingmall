@@ -1,8 +1,8 @@
 import React from 'react'
-import { ReactComponent as Cart } from "../asests/icons/cart.svg";
-import { ReactComponent as Private } from "../asests/icons/private.svg";
-import { ReactComponent as Login } from "../asests/icons/login.svg";
-import { ReactComponent as Logout } from "../asests/icons/logout.svg";
+import Cart from "../asests/icons/cart.svg";
+import Private from "../asests/icons/private.svg";
+import Login from "../asests/icons/login.svg";
+import Logout from "../asests/icons/logout.svg";
 import { useNavigate } from 'react-router-dom';
 
 export default function Nav() {

@@ -3,9 +3,10 @@ import styled from 'styled-components';
 import axios from 'axios';
 import Item from './Item';
 import { useNavigate } from 'react-router-dom';
-import { ReactComponent as Snipper } from "../../asests/icons/snipper.svg";
+import Snipper from '@assets/icons/snipper.svg';
 import { load, category } from '../../reducers/items';
 import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from 'reducers';
 
 const Radio = styled.input`
   display: none;
@@ -58,9 +59,10 @@ const radioTItle = [
     value: "women's clothing",
   },
 ]
+
 function Main() {
 
-  const itemList = useSelector((state) => state.items);
+  const itemList = useSelector((state: RootState) => state.items.filteredList);
   const dispatch = useDispatch();
   const [select, setSelect] = useState('all');
   // const [itemList, setItemList] = useState([]);
@@ -92,7 +94,7 @@ function Main() {
 
   // console.log(isLoading);
 
-  const handleRadioSelect = async (e) => {
+  const handleRadioSelect: React.ChangeEventHandler<HTMLInputElement> = async (e) => {
     setSelect(e.target.id);
   }
   console.log(itemList);
@@ -101,7 +103,7 @@ function Main() {
   // console.log(items.filteredList);
   // console.log(items.filteredList.length);
   // 어디까지 올라가서 선언해야하는지 아직도 감을 못잡겠다.
-  const handleItemClick = (id) => {
+  const handleItemClick = (id: number) => {
     // /items/:id로 이동
     navigate(`./items/${id}`);
   }
@@ -125,10 +127,10 @@ function Main() {
                 }
               </div>
               <div>
-                <p style={{color: '#7F7F7F', fontWeight: '600'}}>Showing: {itemList.filteredList.length} items</p>
+                <p style={{color: '#7F7F7F', fontWeight: '600'}}>Showing: {itemList.length} items</p>
                 <div style={{display: 'flex', gap: '10px', width: '1080px', flexWrap: 'wrap'}}>
                   {
-                    itemList.filteredList.map((item) => <Item key={item.id} item={item} handleItemClick={handleItemClick}/>)
+                    itemList.map((item) => <Item key={item.id} item={item} handleItemClick={handleItemClick}/>)
                   }
                 </div>
               </div>

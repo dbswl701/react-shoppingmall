@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios';
 import styled from 'styled-components';
-import { ReactComponent as Snipper } from "../../asests/icons/snipper.svg";
+import Snipper from "@asests/icons/snipper.svg";
 
 import firebase from '../../firebase'; // Firebase 모듈 가져오기
 import { useDispatch, useSelector } from 'react-redux';
-import { cartIn } from '../../reducers/user';
+import { CartItem, cartIn } from '../../reducers/user';
+import { RootState } from 'reducers';
 
 
 // 이런 네이밍이 적절한가?
@@ -29,7 +30,10 @@ const DescText = styled.p`
   color: rgb(148,148,148);
 `;
 
-const ButtonInCart = styled.button`
+interface ButtonProps {
+  $isInCart: boolean;
+}
+const ButtonInCart = styled.button<ButtonProps>`
   // styled-component에 Prop 전달
   background-color: ${(props) => props.$isInCart ? 'rgb(114, 116, 129)': 'transparent'};
   color: ${(props) => props.$isInCart ? 'white' : 'rgb(114, 116, 129)'};
@@ -57,14 +61,24 @@ const ButtonGoCart = styled.button`
     border: 1px solid rgb(114, 116, 129);
   }
 `;
+
+type Item = {
+  id: number,
+  category: string,
+  title: string,
+  price: number,
+  image: string,
+  count: number,
+  description: string,
+}
 export default React.memo(function Detail() {
   const dispatch = useDispatch();
-  const getData = useSelector((state) => state.user);
+  const getData = useSelector((state: RootState) => state.user);
 
   const params = useParams();
   const navigate = useNavigate();
   console.log(params.itemId);
-  const [item, setItem] = useState({});
+  const [item, setItem] = useState({} as Item);
   const [isLoading, setIsLoading] = useState(false);
   const [isInCart, setIsInCart] = useState(false);
   console.log(getData);
@@ -86,8 +100,8 @@ export default React.memo(function Detail() {
     });
   }
 
-  const UpdateCartData = (uid) => {
-    firebase.database().ref('users').child(uid).child('carts').child(item.id).set({
+  const UpdateCartData = (uid: string) => {
+    firebase.database().ref('users').child(uid).child('carts').child((item.id).toString()).set({
       id: item.id,
       category: item.category,
       title: item.title,
@@ -100,7 +114,7 @@ export default React.memo(function Detail() {
   const handleInCart = () => {
     // id, 카테고리, 이름, 가격, 개수
 
-    const data = [
+    const data: CartItem[] = [
       ...getData.carts,
       {
         id: item.id,

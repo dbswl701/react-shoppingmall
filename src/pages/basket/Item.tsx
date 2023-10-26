@@ -1,8 +1,10 @@
 import React from 'react'
 import styled from 'styled-components';
-import {ReactComponent as Trash} from '../../asests/icons//trash.svg';
+import Trash from '../../asests/icons//trash.svg';
 import firebase from '../../firebase';
 import { useSelector } from 'react-redux';
+import { RootState } from 'reducers';
+import { CartItem } from 'reducers/user';
 
 const Wrapper = styled.div`
   display: flex;
@@ -39,7 +41,11 @@ const PriceText = styled.p`
   margin: 0px;
 `;
 
-const CountBox = styled.div`
+interface CountProp {
+  $isSign: boolean,
+}
+
+const CountBox = styled.div<CountProp>`
   border: 1.5px solid rgb(235,235,235);
   width: 30px;
   height: 30px;
@@ -48,14 +54,16 @@ const CountBox = styled.div`
   justify-content: center;
   cursor: ${prop => prop.$isSign ? 'pointer' : 'auto'}
 `;
-
-export default function Item({item}) {
+type Prop = {
+  item: CartItem;
+}
+export default function Item({item}: Prop) {
   // 장바구니 페이지의 경우, 데이터를 어떻게 관리해야하는지.
   // 각 아이템의 count를 증가, 감소 시 state만 관리, 언마운트나 결제시에만 db에 저장하는 방식
   // 또는 증가, 감소때마다 db도 같이 변경시켜줘야하는지.
-  const uid = useSelector((state) => state.user.uid);
+  const uid = useSelector((state: RootState) => state.user.uid);
 
-  const handleCount = (sign) => { // 변수명이 애매하다?
+  const handleCount = (sign: '-' | '+') => { // 변수명이 애매하다?
     if (sign === '-') {
       if (item.count === 0) return;
       firebase.database().ref(`users/${uid}/carts/${item.id}`).update({

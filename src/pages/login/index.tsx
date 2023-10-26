@@ -32,11 +32,11 @@ export default function Login() {
     pw: ''
   })
 
-  const handleChange = (e) => {
+  const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const {name, value} = e.target;
     setInfo({...info, [name]:value});
   }
-  const handleSubmit = (e) => {
+  const handleSubmit: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
     console.log(info);
     firebase.auth().signInWithEmailAndPassword(info.email, info.pw)
@@ -45,9 +45,9 @@ export default function Login() {
       const user = userCredential.user;
 
       // 로그인하면 장바구니 목록도 같이 불러온다.
-      dispatch(login(user.uid));
+      dispatch(login(user!.uid));
       const dbRef = firebase.database().ref();
-      dbRef.child("users").child(user.uid).child('carts').get().then((snapshot) => {
+      dbRef.child("users").child(user!.uid).child('carts').get().then((snapshot) => {
         if (snapshot.exists()) {
           dispatch(cartIn(snapshot.val()));
         }

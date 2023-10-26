@@ -46,14 +46,14 @@ export default function Signup() {
     pwCheck: true,
   })
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const {name, value} = e.target;
     console.log(name, value);
     setInfo({...info, [name]: value}); // 잉 비번 복붙해서 pwCheck에 넣으면 input name 이 복사되네...?
   }
 
   // DB에 uid 기준으로 저장
-  const writeUserData = (userId, email) => {
+  const writeUserData = (userId: string, email: string) => {
     firebase.database().ref('users').child(userId).set({
       email: email,
     });
@@ -66,7 +66,7 @@ export default function Signup() {
       // Signed in 
       const user = userCredential.user;
       console.log(user);
-      writeUserData(user.uid, info.email);
+      writeUserData(user!.uid, info.email);
       alert('회원가입에 성공하였습니다.');
       navigate('../login');
       // ...
@@ -81,7 +81,7 @@ export default function Signup() {
   }
 
 
-  const handleSubmit = (e) => {
+  const handleSubmit: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
 
     // 한 함수에서 setState 여러번 사용하면 최종본만 반영되는듯 -> 변수 따로 지정해서 저장한 다음 마지막에 set해보자
